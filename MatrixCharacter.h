@@ -4,20 +4,25 @@
 
 #ifndef NEOMATRIX_MATRIXCHARACTER_H
 #define NEOMATRIX_MATRIXCHARACTER_H
-#include <random>
+
+#include <ncurses.h>
 
 class MatrixCharacter{
 private:
     char m_character{};
     int m_speed{};
+    int m_pos_x{};
+    int m_pos_y{};
     int m_counter{};
-    std::random_device rd;  // Obtain a random seed from the operating system
-    std::mt19937 gen{rd()}; // Standard mersenne_twister_engine seeded with rd()
-    std::uniform_int_distribution<> dis{0, 9}; // Define a distribution (e.g., uniform integer distribution)
+
+    // private member functions
+
 public:
-    MatrixCharacter(int speed): m_speed{speed} {};
-    void printCharacter();
+    MatrixCharacter(int y,int x, int speed): m_speed{speed}, m_pos_x{x}, m_pos_y{y} {};
+
+    // public member functions
     std::thread spawn();
+    void printCharacter();
 };
 
 #endif //NEOMATRIX_MATRIXCHARACTER_H
