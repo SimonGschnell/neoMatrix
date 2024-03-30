@@ -6,8 +6,30 @@
 #include <ncurses.h>
 #include "helpers.h"
 #include <memory>
+#include <mutex>
+#include <thread>
+#include <cstdint>
+
+std::mutex _m;
+
+void testPrint(int y, int x,char32_t text, int time){
+    std::unique_lock<std::mutex> lock(_m);
+    mvprintw(y,x,"%c",text);
+    refresh();
+    lock.unlock();
+    std::this_thread::sleep_for(std::chrono::milliseconds (200));
+
+}
+
+void testLoop(int y, int x,char32_t text, int time){
+    for(std::size_t index{0}; index < 100 ; index++){
+        testPrint(y, x, (char32_t)(160+index), time);
+    }
+
+}
 
 int main() {
+
     // Initialize ncurses
     initscr();
     raw(); // takes special characters as raw characters
@@ -42,22 +64,36 @@ int main() {
     mvwprintw(win,1,1,"inside Window");
     wrefresh(win);*/
 
-
-    std::vector<std::unique_ptr<std::thread>> pool{};
+    //
+    std::vector<MatrixCharacter> matrixCharacters{};
+    std::vector<std::thread> pool{};
+    //
 
     // test with single thread
     /*MatrixCharacter mc_thread{0,0,helpers::random_number(1,5)};
     std::thread t =mc_thread.spawn();
     t.join();*/
 
-    for(int i{0}; i< 3 ; i++ ){
 
-        pool.push_back(std::make_unique<std::thread>(MatrixCharacter{0,i,helpers::random_number(1,5)}.spawn()));
-    }
+
+    /*for(int x{0}; x< 100 ; x++ ){
+    //48,57
+        MatrixCharacter& mc {matrixCharacters.emplace_back(_m,helpers::random_number(0,25),x,helpers::random_number(48,100), helpers::random_number(1,25))};
+        pool.emplace_back(&MatrixCharacter::loop,mc);
+    }*/
+    int x{};
+    int y{};
+    getmaxyx(stdscr,y,x);
+
+    mvprintw(41,100,"%s","this is a test");
+    mvprintw(1,1,"x: %d y: %d",x,y);
+    refresh();
+
+
 
 
     for(auto& th : pool){
-           th->join();
+           th.join();
     }
 
     //std::cout << "Hello, World!" << std::endl;
