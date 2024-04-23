@@ -30,30 +30,23 @@ void testLoop(int y, int x,char32_t text, int time){
 
 int main() {
 
+    // ANSI escape code to set text color to green
+    std::cout << "\x1b[32m"; // "\x1b[32m" sets the text color to green
+
     // Initialize ncurses
     initscr();
     raw(); // takes special characters as raw characters
     cbreak(); // allows the user to end the programm with ctrl + c
     noecho(); // does not output keystrokes from the user to the screen
-    /*
-    // Print some text
-    printw("Hello, world!");
 
-    // Move cursor to specific position
-    mvprintw(1,4,"a");
-    refresh();
-    sleep(2);
-    mvprintw(1,4,"b");
-    refresh();
-    sleep(2);
-    mvprintw(1,4,"c");
-    refresh();
-    sleep(2);
-    // Print spaces to overwrite characters at the specific position
-    printw("x"); // Overwrite 6 characters
+    int screen_x{};
+    int screen_y{};
+    // getting the maximum x and y widths
+    getmaxyx(stdscr,screen_y,screen_x);
 
-    // Refresh the screen
-    refresh();
+
+
+ /*
 
     WINDOW *win {newwin(10,20,10,10)};
     refresh();
@@ -76,19 +69,19 @@ int main() {
 
 
 
-    /*for(int x{0}; x< 100 ; x++ ){
+    for(int x{0}; x< screen_x ; x++ ){
     //48,57
-        MatrixCharacter& mc {matrixCharacters.emplace_back(_m,helpers::random_number(0,25),x,helpers::random_number(48,100), helpers::random_number(1,25))};
-        pool.emplace_back(&MatrixCharacter::loop,mc);
-    }*/
-    int x{};
-    int y{};
-    getmaxyx(stdscr,y,x);
 
-    mvprintw(41,100,"%s","this is a test");
-    mvprintw(1,1,"x: %d y: %d",x,y);
-    refresh();
+            MatrixCharacter& mc {matrixCharacters.emplace_back(_m,helpers::random_number(0,screen_y),x,helpers::random_number(48,100), helpers::random_number(250,1000), helpers::random_number(1,25),screen_x, screen_y)};
+            pool.emplace_back(&MatrixCharacter::loop,mc);
 
+
+    }
+
+
+    //mvprintw(41,100,"%s","this is a test");
+    //mvprintw(1,1,"x: %d y: %d",x,y);
+    //refresh();
 
 
 
